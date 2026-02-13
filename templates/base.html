@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FulizaUpdatess | Instant Limit Increase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-green: #22c55e;
+            --primary-hover: #16a34a;
+            --bg-light: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f1f5f9;
+            background-image:
+                radial-gradient(#22c55e 0.5px, transparent 0.5px),
+                linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background-size: 20px 20px, 100% 100%;
+            background-attachment: fixed;
+            color: var(--text-main);
+        }
+
+        .green-gradient-btn {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .logo-text {
+            background: linear-gradient(to right, #22c55e, #22c55e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .toast-enter {
+            animation: slideUpIn 0.5s ease-out forwards;
+        }
+
+        @keyframes slideUpIn {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .loading-pulse {
+            animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .5;
+            }
+        }
+
+        .limit-card.selected {
+            border: 2px solid var(--primary-green);
+            background-color: #f0fdf4;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.1);
+        }
+
+        .modal-overlay {
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+        }
+
+        .custom-shadow {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="min-h-screen">
+    <div
+        class="max-w-md mx-auto min-h-screen relative flex flex-col bg-gradient-to-b from-white via-white to-green-50/30 shadow-xl">
+        <!-- Header -->
+        <header
+            class="px-6 pt-10 pb-6 sticky top-0 z-10 bg-white/90 backdrop-blur-lg border-b border-gray-100 flex flex-col items-center">
+
+            <div
+                class="px-4 py-1.5 rounded-full bg-green-50 border border-green-200/50 mb-6 flex items-center gap-2 shadow-sm">
+                <div class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[10px] font-bold text-green-700 uppercase tracking-[0.25em]">Safaricom Official</span>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <h1 class="text-4xl font-black logo-text tracking-tighter"
+                    style="background: linear-gradient(to bottom right, #15803d, #22c55e); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                    FulizaUpdatess</h1>
+                <div class="h-1 w-12 bg-green-500 rounded-full mt-2 mb-4"></div>
+                <p class="text-[12px] text-slate-500 font-semibold tracking-wide text-center">Instant Limit Increase •
+                    Guaranteed Approval</p>
+            </div>
+        </header>
+
+        <!-- Notification Bar (Optional consistent element) -->
+        <div class="px-6 py-4 bg-green-50/50 mx-6 mt-4 rounded-2xl border border-green-100/50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-green-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <p class="text-[11px] text-green-800 font-medium leading-tight">Choose your new Fuliza limit and complete
+                the payment to get instant access.</p>
+        </div>
+
+        <!-- Random Activity Toast Container (Floating) -->
+        <div id="activity-toast"
+            class="fixed top-24 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-[380px] z-50 px-6 py-4 bg-white/90 backdrop-blur-md shadow-2xl rounded-2xl border border-gray-100 flex items-center gap-3 transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none">
+            <div class="w-8 h-8 rounded-full bg-green-50 flex items-center justify-center text-green-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <p class="text-[11px] font-medium text-gray-800" id="toast-message">0719****77 increased to Ksh 8,000
+                </p>
+                <p class="text-[10px] text-gray-400 mt-0.5">• just now</p>
+            </div>
+        </div>
+
+        <!-- Background Decorative Elements -->
+        <div class="absolute top-0 right-0 -tr-1/2 w-64 h-64 bg-green-500/5 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div class="absolute top-1/2 left-0 -tl-1/2 w-80 h-80 bg-green-500/5 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <!-- Main Content -->
+        <main class="flex-grow px-6 py-6 pb-24 relative z-0">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- Global Loading Overlay -->
+    <div id="global-loader"
+        class="fixed inset-0 z-[100] hidden flex items-center justify-center bg-slate-900/40 backdrop-blur-md">
+        <div class="bg-white p-8 rounded-[40px] shadow-2xl flex flex-col items-center">
+            <div class="w-16 h-16 border-4 border-green-100 border-t-green-600 rounded-full animate-spin"></div>
+            <p class="mt-4 font-bold text-gray-800">Please wait...</p>
+        </div>
+    </div>
+
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Random Activity Generator
+        const phonePrefixes = ['0719', '0722', '0703', '0745', '0798', '0711', '0110', '0748'];
+        const amounts = ['5,000', '10,000', '15,000', '25,000', '35,000', '45,000'];
+
+        function showRandomToast() {
+            const toast = document.getElementById('activity-toast');
+            const message = document.getElementById('toast-message');
+
+            const prefix = phonePrefixes[Math.floor(Math.random() * phonePrefixes.length)];
+            const amount = amounts[Math.floor(Math.random() * amounts.length)];
+            const suffix = Math.floor(10 + Math.random() * 89);
+
+            message.innerText = `${prefix}****${suffix} increased to Ksh ${amount}`;
+
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toast.classList.add('opacity-1', 'translate-y-0');
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+                toast.classList.remove('opacity-1', 'translate-y-0');
+            }, 5000);
+        }
+
+        setInterval(() => {
+            if (Math.random() > 0.5) showRandomToast();
+        }, 8000);
+    </script>
+</body>
+
+</html>
