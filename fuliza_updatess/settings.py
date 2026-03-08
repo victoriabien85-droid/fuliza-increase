@@ -137,3 +137,7 @@ PAYHERO_API_USERNAME = os.environ.get('PAYHERO_API_USERNAME', '')
 PAYHERO_API_PASSWORD = os.environ.get('PAYHERO_API_PASSWORD', '')
 PAYHERO_CALLBACK_URL = os.environ.get('PAYHERO_CALLBACK_URL', '')
 BASIC_AUTH_TOKEN = os.environ.get('BASIC_AUTH_TOKEN', '')
+
+# Create staticfiles directory if it doesn't exist (to avoid UserWarning on Render)
+if not os.path.exists(STATIC_ROOT):
+    os.makedirs(STATIC_ROOT, exist_ok=True)

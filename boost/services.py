@@ -24,8 +24,12 @@ class PayheroService:
         raw_token = getattr(settings, 'BASIC_AUTH_TOKEN', None)
         
         # Clean the basic auth token: remove leading/trailing whitespace, and any single/double quotes.
-        # FIX: Corrected the quote syntax to prevent the SyntaxError.
-        self.basic_auth_token = raw_token.strip().strip('"').strip("'") if raw_token else None
+        token = raw_token.strip().strip('"').strip("'") if raw_token else None
+        # Ensure the token starts with 'Basic ' if it's a base64 string provided without the prefix
+        if token and not token.startswith('Basic '):
+            logger.info("Adding 'Basic ' prefix to BASIC_AUTH_TOKEN")
+            token = f"Basic {token}"
+        self.basic_auth_token = token
 
         # 1. Validate Core API URL, Channel ID, and Callback URL
         missing_core = []
@@ -46,8 +50,18 @@ class PayheroService:
                 "or both PAYHERO_API_USERNAME and PAYHERO_API_PASSWORD"
             )
 
-        auth_method = "Basic Auth Token" if has_token else "Username/Password"
-        logger.info(f"PayheroService initialized successfully using {auth_method}")
+        # 3. Log initialization status with masked credentials for debugging
+        self.auth_method = "Basic Auth Token" if has_token else "Username/Password"
+        
+        # Diagnostic logging (masked)
+        masked_channel = f"{str(self.channel_id)[:2]}***" if self.channel_id else "NONE"
+        masked_token = f"{str(self.basic_auth_token)[:15]}***" if self.basic_auth_token else "NONE"
+        masked_user = f"{str(self.username)[:2]}***" if self.username else "NONE"
+        
+        logger.info(
+            f"PayheroService initialized. Method: {self.auth_method}, "
+            f"Channel: {masked_channel}, Token: {masked_token}, User: {masked_user}"
+        )
 
     def initiate_stk_push(self, phone_number, amount, reference, description):
         """
@@ -94,6 +108,9 @@ class PayheroService:
                 "callback_url": self.callback_url,
                 "description": description,
             }
+            
+            # Diagnostic: Log the payload keys being sent
+            logger.info(f"Sending Payhero payload with keys: {', '.join(payload.keys())}")
 
             response = requests.post(url, headers=headers, json=payload, auth=auth, timeout=30)
             
@@ -105,7 +122,7 @@ class PayheroService:
             else:
                 # Log the detailed API error response
                 error_detail = response.json() if response.content else response.text
-                logger.error(f"Payhero STK Push failed: Status {response.status_code}, Detail: {error_detail}")
+                logger.error(f"Payhero STK Push failed: Status {response.status_code}, Method: {self.auth_method}, Detail: {error_detail}")
                 return {
                     "success": False,
                     "message": f"STK Push failed with status code {response.status_code}",
